@@ -110,4 +110,14 @@ resource "aws_route_table" "pub-routes" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
+
+  tags = {
+    Name = "main_route_table"
+  }
+}
+
+resource "aws_route_table_association" "pub_subnets" {
+  for_each = var.public_subnets
+  subnet_id      = aws_subnet.public_subnets[each.key].id
+  route_table_id = aws_route_table.pvt_routes.id
 }

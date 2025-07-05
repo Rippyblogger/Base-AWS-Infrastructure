@@ -1,6 +1,6 @@
 // EKS Role definition
 
-resource "aws_iam_role" "eks_role" {
+resource "aws_iam_role" "eks_cluster_role" {
   name = "eks_role"
 
   assume_role_policy = jsonencode({
@@ -22,7 +22,7 @@ resource "aws_iam_role" "eks_role" {
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks_role.name
+  role       = aws_iam_role.eks_cluster_role.name
 }
 
 // Node Group Role definition and association
