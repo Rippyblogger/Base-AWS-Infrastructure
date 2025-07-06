@@ -21,3 +21,15 @@ variable capacity_type {
 variable "instance_types" {
   type = list(string)
 }
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "vpc_cidr_block" {
+  type = string
+}
+
+variable "alb_security_group_id" {
+  type        = string
+}
