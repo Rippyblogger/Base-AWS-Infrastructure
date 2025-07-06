@@ -52,11 +52,6 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
-resource "aws_internet_gateway_attachment" "igw_attachment" {
-  internet_gateway_id = aws_internet_gateway.gw.id
-  vpc_id              = aws_vpc.main.id
-}
-
 // Create elastic IP
 resource "aws_eip" "natgw" {
   domain = "vpc"
