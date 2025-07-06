@@ -25,6 +25,9 @@ resource "aws_eks_node_group" "node_group" {
   node_role_arn   = aws_iam_role.node_group.arn
   subnet_ids      = var.private_subnets
 
+  capacity_type  = var.capacity_type
+  instance_types = var.instance_types
+
   scaling_config {
     desired_size = 1
     max_size     = 2
@@ -39,4 +42,20 @@ resource "aws_eks_node_group" "node_group" {
     aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
   ]
+}
+
+resource "aws_eks_access_entry" "admin_access" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = "arn:aws:iam::<account_id>:role/AdminRole" 
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "admin_policy" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = aws_eks_access_entry.admin_access.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
 }

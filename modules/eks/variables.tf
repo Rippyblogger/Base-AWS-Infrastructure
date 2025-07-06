@@ -13,3 +13,11 @@ variable "node_group_name" {
 variable "private_subnets" {
   type = list(string)
 }
+
+variable capacity_type {
+    type = string
+}
+
+variable "instance_types" {
+  type = list(string)
+}

@@ -98,7 +98,7 @@ resource "aws_route_table_association" "pvt_subnets" {
 
 //Create Route to IGW
 
-resource "aws_route_table" "pub-routes" {
+resource "aws_route_table" "pub_routes" {
   vpc_id = aws_vpc.main.id
 
   route {
@@ -114,5 +114,5 @@ resource "aws_route_table" "pub-routes" {
 resource "aws_route_table_association" "pub_subnets" {
   for_each = var.public_subnets
   subnet_id      = aws_subnet.public_subnets[each.key].id
-  route_table_id = aws_route_table.pvt_routes.id
+  route_table_id = aws_route_table.pub_routes.id
 }
