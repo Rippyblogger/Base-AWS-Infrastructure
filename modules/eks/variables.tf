@@ -21,3 +21,7 @@ variable capacity_type {
 variable "instance_types" {
   type = list(string)
 }
+
+# variable "account_id" {
+#   type = string
+# }

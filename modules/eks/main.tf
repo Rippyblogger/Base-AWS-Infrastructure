@@ -1,3 +1,8 @@
+//Obtain account_id
+
+data "aws_caller_identity" "current" {}
+
+#Create EKS Cluster
 resource "aws_eks_cluster" "main" {
   name = var.cluster_name
 
@@ -46,7 +51,7 @@ resource "aws_eks_node_group" "node_group" {
 
 resource "aws_eks_access_entry" "admin_access" {
   cluster_name  = aws_eks_cluster.main.name
-  principal_arn = "arn:aws:iam::<account_id>:role/AdminRole" 
+  principal_arn =  "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AdminRole"
   type          = "STANDARD"
 }
 
