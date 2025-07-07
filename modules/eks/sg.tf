@@ -53,3 +53,11 @@ resource "aws_vpc_security_group_ingress_rule" "from_alb_443" {
   referenced_security_group_id = var.alb_security_group_id
   description                  = "Allow HTTPS from ALB"
 }
+
+# Egress rule
+resource "aws_vpc_security_group_egress_rule" "all_outbound" {
+  security_group_id = aws_security_group.eks_node_sg.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+  description       = "Allow all outbound traffic"
+}

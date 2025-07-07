@@ -33,3 +33,11 @@ variable "vpc_cidr_block" {
 variable "alb_security_group_id" {
   type        = string
 }
+
+# variable "ami_id" {
+#     type = string
+# }
+
+variable "instance_type" {
+  type = string
+}
