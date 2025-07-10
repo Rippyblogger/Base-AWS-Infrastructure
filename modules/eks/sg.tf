@@ -35,7 +35,7 @@ resource "aws_vpc_security_group_ingress_rule" "kubelet_api" {
   description       = "Allow EKS control plane to reach kubelet"
 }
 
-
+//ALB SG
 resource "aws_vpc_security_group_ingress_rule" "from_alb_80" {
   security_group_id            = aws_security_group.eks_node_sg.id
   from_port                    = 80
@@ -61,3 +61,14 @@ resource "aws_vpc_security_group_egress_rule" "all_outbound" {
   cidr_ipv4         = "0.0.0.0/0"
   description       = "Allow all outbound traffic"
 }
+
+resource "aws_vpc_security_group_ingress_rule" "eks_control_plane_443" {
+  security_group_id = aws_security_group.eks_node_sg.id
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0" # Ideally use AWS IP ranges for EKS control plane
+  description       = "Allow EKS control plane access to nodes on port 443"
+}
+
+

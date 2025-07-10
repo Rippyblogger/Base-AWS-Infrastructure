@@ -9,3 +9,7 @@ variable "vpc_id" {
 variable "vpc_cidr_block" {
   type = string
 }
+
+variable "lb_logs_bucket_name" {
+  type = string
+}

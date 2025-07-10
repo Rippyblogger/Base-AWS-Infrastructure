@@ -15,8 +15,9 @@ resource "aws_vpc_security_group_ingress_rule" "allow_internal_traffic" {
   security_group_id = aws_security_group.allow_internal_traffic.id
   cidr_ipv4         = var.vpc_cidr_block
   from_port         = 0
-  ip_protocol       = "-1"
   to_port           = 65535
+  ip_protocol       = "tcp"
+  description       = "Allow internal TCP"
 
 tags = {
     Name = "Allow Internal traffic"
@@ -29,7 +30,8 @@ tags = {
 //Create S3 bucket to hold LB access logs
 
 resource "aws_s3_bucket" "lb_logs" {
-  bucket = "LB Accesslogs bucket"
+  bucket = var.lb_logs_bucket_name
+  force_destroy = true //Remove later
 
   tags = {
     Name        = "LB_Access_logs"
@@ -45,11 +47,11 @@ resource "aws_lb" "internal" {
   security_groups    = [aws_security_group.allow_internal_traffic.id]
   subnets            = var.private_subnets
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false // Remove later
 
   access_logs {
     bucket  = aws_s3_bucket.lb_logs.id
-    prefix  = "lb-access-"
+    prefix  = "lb_access_log"
     enabled = true
   }
 
@@ -75,17 +77,49 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.internal.arn
-  port              = "443"
-  protocol          = "HTTPS"
+# resource "aws_lb_listener" "https" {
+#   load_balancer_arn = aws_lb.internal.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
 
-  default_action {
-    type = "fixed-response"
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Default backend (HTTPS)"
-      status_code  = "404"
-    }
-  }
+#   default_action {
+#     type = "fixed-response"
+#     fixed_response {
+#       content_type = "text/plain"
+#       message_body = "Default backend (HTTPS)"
+#       status_code  = "404"
+#     }
+#   }
+# }
+
+// Grant permission to ALB to modify s3 bucket
+
+resource "aws_s3_bucket_policy" "allow_alb_access_logs" {
+  bucket = aws_s3_bucket.lb_logs.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid       = "AWSLogDeliveryWrite",
+        Effect    = "Allow",
+        Principal = {
+          Service = "logdelivery.elasticloadbalancing.amazonaws.com"
+        },
+        Action    = [
+          "s3:PutObject"
+        ],
+        Resource  = "${aws_s3_bucket.lb_logs.arn}/*"
+      },
+      {
+        Sid       = "AWSLogDeliveryAclCheck",
+        Effect    = "Allow",
+        Principal = {
+          Service = "logdelivery.elasticloadbalancing.amazonaws.com"
+        },
+        Action    = "s3:GetBucketAcl",
+        Resource  = aws_s3_bucket.lb_logs.arn
+      }
+    ]
+  })
 }
