@@ -70,5 +70,3 @@ resource "aws_vpc_security_group_ingress_rule" "eks_control_plane_443" {
   cidr_ipv4         = "0.0.0.0/0" # Ideally use AWS IP ranges for EKS control plane
   description       = "Allow EKS control plane access to nodes on port 443"
 }
-
-
