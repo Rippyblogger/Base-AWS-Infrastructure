@@ -66,4 +66,13 @@ resource "aws_eks_node_group" "node_group" {
 }
 
 
-// Create certificate for https listener (come back to this)
+// Create ECR repository
+
+resource "aws_ecr_repository" "image_repository" {
+  name                 = var.ecr_repo_name
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
