@@ -20,7 +20,7 @@ resource "aws_iam_role" "oidc_role" {
           "Federated" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
-        "Condition" : { 
+        "Condition" : {
           "StringEquals" : {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com",
             "token.actions.githubusercontent.com:sub" : "repo:${var.github_username}/${var.github_repository}:ref:refs/heads/${var.github_branch}"
@@ -91,7 +91,15 @@ resource "aws_iam_role_policy" "oidc_deploy_policy" {
           "iam:PutRolePolicy",
           "iam:DeleteRolePolicy",
           "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy"
+          "iam:DetachRolePolicy",
+          "iam:ListRolePolicies",
+          "iam:GetRolePolicy",
+          "iam:CreatePolicy",
+          "iam:DeletePolicy",
+          "iam:GetPolicy",
+          "iam:ListPolicyVersions",
+          "iam:CreatePolicyVersion",
+          "iam:DeletePolicyVersion"
         ],
         Resource = "*"
       },
@@ -137,8 +145,8 @@ resource "aws_iam_role_policy" "oidc_deploy_policy" {
 # Create EKS Access Entry for GitHub Actions OIDC role
 resource "aws_eks_access_entry" "github_actions" {
   cluster_name  = var.eks_cluster_name
-  principal_arn = aws_iam_role.oidc_role.arn 
-  type         = "STANDARD"
+  principal_arn = aws_iam_role.oidc_role.arn
+  type          = "STANDARD"
 }
 
 # Associate admin policy with your OIDC role
