@@ -9,3 +9,7 @@ variable "github_repository" {
 variable "github_branch" {
   type = string
 }
+
+variable "eks_cluster_name" {
+  type = string
+}
