@@ -99,7 +99,15 @@ resource "aws_iam_role_policy" "oidc_deploy_policy" {
           "iam:GetPolicy",
           "iam:ListPolicyVersions",
           "iam:CreatePolicyVersion",
-          "iam:DeletePolicyVersion"
+          "iam:DeletePolicyVersion",
+          "iam:ListAttachedRolePolicies",    
+          "iam:GetPolicyVersion",           
+          "iam:SetDefaultPolicyVersion",    
+          "iam:TagRole",                    
+          "iam:UntagRole",                 
+          "iam:ListRoles",                  
+          "iam:TagPolicy",              
+          "iam:UntagPolicy" 
         ],
         Resource = "*"
       },
