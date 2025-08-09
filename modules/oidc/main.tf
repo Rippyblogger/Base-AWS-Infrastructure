@@ -107,7 +107,8 @@ resource "aws_iam_role_policy" "oidc_deploy_policy" {
           "iam:UntagRole",                 
           "iam:ListRoles",                  
           "iam:TagPolicy",              
-          "iam:UntagPolicy" 
+          "iam:UntagPolicy",
+          "iam:ListInstanceProfilesForRole"
         ],
         Resource = "*"
       },
