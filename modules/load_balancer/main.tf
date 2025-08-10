@@ -77,21 +77,6 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# resource "aws_lb_listener" "https" {
-#   load_balancer_arn = aws_lb.internal.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-
-#   default_action {
-#     type = "fixed-response"
-#     fixed_response {
-#       content_type = "text/plain"
-#       message_body = "Default backend (HTTPS)"
-#       status_code  = "404"
-#     }
-#   }
-# }
-
 // Grant permission to ALB to modify s3 bucket
 
 resource "aws_s3_bucket_policy" "allow_alb_access_logs" {

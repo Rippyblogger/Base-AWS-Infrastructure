@@ -65,13 +65,3 @@ resource "aws_iam_role_policy_attachment" "app_custom_permissions" {
   role       = aws_iam_role.irsa_role.name
   policy_arn = aws_iam_policy.app_custom_permissions.arn
 }
-
-# resource "kubernetes_service_account" "irsa" {
-#   metadata {
-#     name      = var.service_account_name
-#     namespace = var.namespace
-#     annotations = {
-#       "eks.amazonaws.com/role-arn" = aws_iam_role.irsa_role.arn
-#     }
-#   }
-# }
