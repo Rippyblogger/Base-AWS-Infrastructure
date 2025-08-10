@@ -43,18 +43,68 @@ Before you begin, ensure you have:
 
 ## 🛠️ Quick Start
 
-### Step 1: Clone and Prepare
+### Step 1: Create S3 Bucket for Remote State (One-time Setup)
+
+**Important**: Terraform requires an S3 bucket to store its state remotely. Create this first:
+
+```bash
+# Create S3 bucket for Terraform state (replace with your unique name)
+aws s3 mb s3://your-terraform-state-bucket-12345 --region us-east-1
+
+# Enable versioning (handles state file recovery)
+aws s3api put-bucket-versioning \
+  --bucket your-terraform-state-bucket-12345 \
+  --versioning-configuration Status=Enabled
+
+# Enable server-side encryption
+aws s3api put-bucket-encryption \
+  --bucket your-terraform-state-bucket-12345 \
+  --server-side-encryption-configuration '{
+    "Rules": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        }
+      }
+    ]
+  }'
+
+# Block public access
+aws s3api put-public-access-block \
+  --bucket your-terraform-state-bucket-12345 \
+  --public-access-block-configuration \
+  BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+```
+
+**⚠️ Important**: Replace `your-terraform-state-bucket-12345` with a globally unique bucket name. This bucket will store Terraform state for both your infrastructure and application deployments.
+
+
+### Step 2: Clone and Prepare
 
 ```bash
 # Clone the repository
 git clone https://github.com/Rippyblogger/Base-AWS-Infrastructure.git
 cd Base-AWS-Infrastructure
 
+Modify the `bucket' parameter of the existing backend configuration in the `provider.tf` file:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket  = "your-terraform-state-bucket-12345"  # Use your actual bucket name
+    key     = "infrastructure/terraform.tfstate"
+    region  = "us-east-1"                          # Match your bucket region
+    encrypt = true
+  }
+}
+```
+
 # Initialize Terraform
+```
 terraform init
 ```
 
-### Step 2: Configure Your Infrastructure
+### Step 3: Configure Your Infrastructure
 
 The main Terraform configuration uses modular architecture. Here's a sample of how the modules are called with real values:
 
@@ -131,7 +181,7 @@ instance_type     = "t3.medium"          # t3.small for dev, t3.large for prod
 capacity_type     = "ON_DEMAND"          # Use "SPOT" for cost savings (less reliable)
 ```
 
-### Step 3: Review and Deploy
+### Step 4: Review and Deploy
 
 ```bash
 # Review what will be created
@@ -237,45 +287,6 @@ Enables secure GitHub Actions integration:
 | `github_org` | GitHub organization/username | `string` | `"your-username"` |
 | `github_repo` | Repository name for OIDC access | `string` | `"your-app-repo"` |
 
-## 🌍 Multi-Environment Deployment
-
-This infrastructure can be deployed across multiple environments:
-
-### Development Environment
-```hcl
-# dev.tfvars
-environment = "development"
-node_instance_type = "t3.medium"
-node_desired_capacity = 1
-node_max_capacity = 2
-```
-
-### Production Environment
-```hcl
-# prod.tfvars
-environment = "production"
-node_instance_type = "t3.large"
-node_desired_capacity = 3
-node_max_capacity = 10
-```
-
-Deploy with specific variable files:
-```bash
-terraform apply -var-file="dev.tfvars"
-```
-
-## 📤 Outputs
-
-After successful deployment, Terraform will output important information:
-
-```bash
-# View all outputs
-terraform output
-
-# Specific outputs
-terraform output vpc_id
-terraform output eks_cluster_name
-terraform output load_balancer_dns_name
 ```
 
 ## 🔄 Integration with Applications
