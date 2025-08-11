@@ -34,7 +34,7 @@ resource "aws_iam_role_policy_attachment" "quota_read_permissions" {
 resource "aws_iam_policy" "app_custom_permissions" {
   name        = "app-custom-permissions"
   description = "Custom permissions for the API app"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -59,7 +59,18 @@ resource "aws_iam_policy" "app_custom_permissions" {
           "servicequotas:GetAWSDefaultServiceQuota"
         ]
         Resource = "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : "iam:CreateServiceLinkedRole",
+        "Resource" : "*",
+        "Condition" : {
+          "StringEquals" : {
+            "iam:AWSServiceName" : "servicequotas.amazonaws.com"
+          }
+        }
       }
+
     ]
   })
 }
