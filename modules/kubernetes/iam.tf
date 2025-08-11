@@ -51,9 +51,12 @@ resource "aws_iam_policy" "app_custom_permissions" {
       {
         Effect = "Allow"
         Action = [
-          "service-quotas:RequestServiceQuotaIncrease",
-          "service-quotas:GetRequestedServiceQuotaChange",
-          "service-quotas:ListRequestedServiceQuotaChangeHistory"
+          "servicequotas:RequestServiceQuotaIncrease",
+          "servicequotas:GetRequestedServiceQuotaChange",
+          "servicequotas:ListRequestedServiceQuotaChangeHistory",
+          "servicequotas:GetServiceQuota",
+          "servicequotas:ListServiceQuotas",
+          "servicequotas:GetAWSDefaultServiceQuota"
         ]
         Resource = "*"
       }
