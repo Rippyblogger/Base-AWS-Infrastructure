@@ -3,7 +3,6 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
   depends_on = [kubernetes_service_account_v1.app_service_account]
   metadata {
     name      = var.deployment_name
-    namespace = var.namespace
     labels = {
       app = var.app_name
       env = var.env
@@ -57,7 +56,6 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
 resource "kubernetes_service_v1" "go_api_service" {
   metadata {
     name      = "${var.deployment_name}-svc"
-    namespace = var.namespace
     labels = {
       env = var.env
     }
@@ -81,7 +79,6 @@ resource "kubernetes_service_v1" "go_api_service" {
 resource "kubernetes_service_account_v1" "app_service_account" {
   metadata {
     name      = var.service_account_name
-    namespace = var.namespace
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.irsa_role.arn
     }
