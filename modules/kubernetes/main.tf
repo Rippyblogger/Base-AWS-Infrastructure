@@ -39,12 +39,12 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
 
           resources {
             limits = {
-              cpu    = "1"
-              memory = "3Gi"
+              cpu    = "2"
+              memory = "4Gi"
             }
             requests = {
-              cpu    = "750m"
-              memory = "2Gi"
+              cpu    = "1"
+              memory = "3Gi"
             }
           }
         }
