@@ -2,7 +2,7 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
 
   depends_on = [kubernetes_service_account_v1.app_service_account]
   metadata {
-    name      = var.deployment_name
+    name = var.deployment_name
     labels = {
       app = var.app_name
       env = var.env
@@ -43,37 +43,11 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
               port   = 8080
               scheme = "HTTP"
             }
-            initial_delay_seconds = 10   
-            period_seconds        = 10  
-            timeout_seconds       = 5    
-            success_threshold     = 1    
-            failure_threshold     = 3     
-          }
-
-          liveness_probe {
-            http_get {
-              path   = "/health"
-              port   = 8080
-              scheme = "HTTP"
-            }
-            initial_delay_seconds = 30   
-            period_seconds        = 180   
-            timeout_seconds       = 5     
-            success_threshold     = 1     
-            failure_threshold     = 3     
-          }
-
-          startup_probe {
-            http_get {
-              path   = "/health"
-              port   = 8080
-              scheme = "HTTP"
-            }
-            initial_delay_seconds = 5     
-            period_seconds        = 5    
-            timeout_seconds       = 3    
-            failure_threshold     = 10    
-            success_threshold     = 1     
+            initial_delay_seconds = 60
+            period_seconds        = 10
+            timeout_seconds       = 5
+            success_threshold     = 1
+            failure_threshold     = 3
           }
 
           resources {
@@ -94,7 +68,7 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
 
 resource "kubernetes_service_v1" "go_api_service" {
   metadata {
-    name      = "${var.deployment_name}-svc"
+    name = "${var.deployment_name}-svc"
     labels = {
       env = var.env
     }
@@ -117,7 +91,7 @@ resource "kubernetes_service_v1" "go_api_service" {
 
 resource "kubernetes_service_account_v1" "app_service_account" {
   metadata {
-    name      = var.service_account_name
+    name = var.service_account_name
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.irsa_role.arn
     }
