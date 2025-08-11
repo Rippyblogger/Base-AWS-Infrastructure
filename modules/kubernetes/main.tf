@@ -37,6 +37,45 @@ resource "kubernetes_deployment_v1" "go_api_deployment" {
             name           = "http"
           }
 
+          readiness_probe {
+            http_get {
+              path   = "/health"
+              port   = 8080
+              scheme = "HTTP"
+            }
+            initial_delay_seconds = 10   
+            period_seconds        = 10  
+            timeout_seconds       = 5    
+            success_threshold     = 1    
+            failure_threshold     = 3     
+          }
+
+          liveness_probe {
+            http_get {
+              path   = "/health"
+              port   = 8080
+              scheme = "HTTP"
+            }
+            initial_delay_seconds = 30   
+            period_seconds        = 180   
+            timeout_seconds       = 5     
+            success_threshold     = 1     
+            failure_threshold     = 3     
+          }
+
+          startup_probe {
+            http_get {
+              path   = "/health"
+              port   = 8080
+              scheme = "HTTP"
+            }
+            initial_delay_seconds = 5     
+            period_seconds        = 5    
+            timeout_seconds       = 3    
+            failure_threshold     = 10    
+            success_threshold     = 1     
+          }
+
           resources {
             limits = {
               cpu    = "2"
