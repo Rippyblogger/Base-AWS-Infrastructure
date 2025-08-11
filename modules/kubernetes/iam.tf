@@ -11,7 +11,7 @@ resource "aws_iam_role" "irsa_role" {
       Action = "sts:AssumeRoleWithWebIdentity",
       Condition = {
         StringEquals = {
-          "${replace(var.oidc_provider_url, "https://", "")}:sub" = "system:serviceaccount:${var.namespace}:${var.service_account_name}"
+          "${replace(var.oidc_provider_url, "https://", "")}:sub" = "system:serviceaccount:default:${var.service_account_name}"
         }
       }
     }]
